@@ -26,9 +26,26 @@ const changePackageVersion = (newVersion) => {
 }
 
 // Change working directory if user defined PACKAGEJSON_DIR
+console.log(process.env.PACKAGEJSON_DIR)
 if (process.env.PACKAGEJSON_DIR) {
   process.env.GITHUB_WORKSPACE = `${process.env.GITHUB_WORKSPACE}/${process.env.PACKAGEJSON_DIR}`
   process.chdir(process.env.GITHUB_WORKSPACE)
+  console.log(process.env.GITHUB_WORKSPACE)
+}
+
+// Check if the current directory is a Git repository
+const isGitRepository = () => {
+  try {
+    execSync('git rev-parse --is-inside-work-tree');
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+if (!isGitRepository()) {
+  console.error('The current directory is not a Git repository.');
+  process.exit(1);
 }
 
 // Run your GitHub Action!
